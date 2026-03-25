@@ -2,6 +2,8 @@
 
 ## Example Workflow
 
+### AWS
+
 ```yaml
 name: Publish TechDocs
 
@@ -22,9 +24,28 @@ jobs:
     - uses: elisa-actions/upload-backstage-techdocs@v1
       with:
         entity: default/Component/my-entity
+        storage-type: awsS3 # default value, can be omitted
         s3-access-key-id: ${{ secrets.BACKSTAGE_ACCESS_KEY_ID }}
         s3-secret-access-key: ${{ secrets.BACKSTAGE_SECRET_ACCESS_KEY }}
         s3-bucket: ${{ secrets.BACKSTAGE_BUCKET }}
+```
+
+### GCP
+
+```yaml
+# ...
+  publish:
+    timeout-minutes: 5
+    steps:
+    - uses: actions/checkout@v4
+    - uses: elisa-actions/upload-backstage-techdocs@v1
+      with:
+        entity: default/Component/my-entity
+        storage-type: googleGcs
+        gcp-project-id: ${{ vars.BACKSTAGE_GCP_PROJECT_ID }}
+        gcp-workload-identity-provider: ${{ vars.BACKSTAGE_GCP_BUCKET_SA_WIF_POOL }}
+        gcp-service-account: ${{ vars.BACKSTAGE_GCP_BUCKET_SA }}
+        gcp-bucket: ${{ vars.BACKSTAGE_GCP_BUCKET_NAME }}
 ```
 
 ## Techdocs Configuration
