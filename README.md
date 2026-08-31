@@ -16,6 +16,10 @@ on:
     - 'docs/**/*'
   workflow_dispatch:
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   publish:
     timeout-minutes: 5
@@ -33,7 +37,22 @@ jobs:
 ### GCP
 
 ```yaml
-# ...
+name: Publish TechDocs
+
+on:
+  push:
+    branches:
+    - main
+    paths:
+    - mkdocs.yml
+    - 'docs/**/*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
   publish:
     timeout-minutes: 5
     steps:
@@ -67,12 +86,7 @@ docs_dir: docs
 # (optional) Define the navigation structure of your site. Useful if you have multiple documentation pages or want to skip some of them.
 nav:
   - Home: README.md
-# (optional) Configure markdown extensions. Custom fences for Mermaid are required only for non-Backstage rendering.
-markdown_extensions:
-  pymdownx.extra:
-    pymdownx.superfences:
-      custom_fences:
-        - name: mermaid
-          class: mermaid
-          format: !!python/name:pymdownx.superfences.fence_code_format ''
 ```
+
+> [!NOTE]
+> `techdocs-core` automatically handles markdown extensions (such as Mermaid diagrams). Any `markdown_extensions` section defined in `mkdocs.yml` is automatically stripped during generation.
