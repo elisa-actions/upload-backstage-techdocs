@@ -68,6 +68,26 @@ runs:
       uses: actions/setup-node@v4
       with:
         node-version: 22
+
+    - name: Sanitize MkDocs configuration
+      run: |
+        SOURCE_DIR="${{ inputs.source-dir }}"
+        MKDOCS_FILE=""
+
+        if [[ -f "$SOURCE_DIR/mkdocs.yml" ]]; then
+          MKDOCS_FILE="$SOURCE_DIR/mkdocs.yml"
+        elif [[ -f "$SOURCE_DIR/mkdocs.yaml" ]]; then
+          MKDOCS_FILE="$SOURCE_DIR/mkdocs.yaml"
+        fi
+
+        if [[ -n "$MKDOCS_FILE" ]]; then
+          if yq -e 'has("markdown_extensions")' "$MKDOCS_FILE" >/dev/null 2>&1; then
+            yq -i 'del(.markdown_extensions)' "$MKDOCS_FILE"
+            echo "::warning file=$MKDOCS_FILE::'markdown_extensions' was found in $MKDOCS_FILE and has been stripped out to prevent TechDocs build errors."
+          fi
+        fi
+      shell: bash
+
     - name: Generate documents
       run: |
         npx @techdocs/cli generate \
